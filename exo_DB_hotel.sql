@@ -47,12 +47,16 @@
         SELECT station.sta_nom, hotel.hot_nom, hotel.hot_categorie, hotel.hot_ville
         FROM  station
         JOIN hotel ON station.sta_id = hotel.hot_sta_id;
+        Explication: Cette requête sélectionne les colonnes sta_nom, hot_nom, hot_categorie et hot_ville de la table hotel
+et la colonne sta_nom de la table station en joignant les deux tables sur la colonne sta_id de la table station et la colonne hot_sta_id de la table hotel.
 
 -- 8 - Afficher la liste des chambres et leur hôtel
 -- Le résultat doit faire apparaître le nom de l’hôtel, la catégorie, la ville, le numéro de la chambre
         SELECT hotel.hot_nom, hotel.hot_categorie, hotel.hot_ville, chambre.cha_numero
         FROM chambre
         JOIN hotel ON chambre.cha_hot_id = hotel.hot_id;
+        Explication: Cette requête sélectionne les colonnes hot_nom, hot_categorie, hot_ville et cha_numero de la table hotel et la table chambre en 
+joignant les deux tables sur la colonne cha_hot_id de la table chambre et la colonne hot_id de la table hotel.
 
 -- 9 - Afficher la liste des chambres de plus d'une place dans des hôtels situés sur la ville de Bretou
 -- Le résultat doit faire apparaître le nom de l’hôtel, la catégorie, la ville, le numéro de la chambre et sa capacité
@@ -60,6 +64,9 @@
         FROM chambre
         JOIN hotel ON chambre.cha_hot_id = hotel.hot_id
         WHERE hotel.hot_ville = 'Bretou' AND chambre.cha_capacite >1;
+        Explication: Cette requête sélectionne les colonnes hot_nom, hot_categorie, hot_ville, cha_numero et cha_capacite de la table hotel et la table chambre en joignant 
+les deux tables sur la colonne cha_hot_id de la table chambre et la colonne hot_id de la table hotel en utilisant les clauses WHERE pour filtrer les résultats pour les hôtels
+ situés à Bretou et pour les chambres avec une capacité de plus d'une place.
     
 -- 10 - Afficher la liste des réservations avec le nom des clients
 -- Le résultat doit faire apparaître le nom du client, le nom de l’hôtel, la date de réservation
@@ -68,6 +75,8 @@
         JOIN client ON client.cli_id = reservation.res_cli_id
         JOIN chambre ON chambre.cha_id = res_cha_id 
         JOIN hotel ON  hotel.hot_id = chambre.cha_hot_id;
+        Explication: Cette requête sélectionne les colonnes cli_nom, hot_nom et res_date de la table client, la table reservation, la table chambre
+ et la table hotel en joignant les tables client, reservation, chambre et hotel sur les colonnes cli_id, res_cli_id, cha_id et cha_hot_id, respectivement.
 
 -- 11 - Afficher la liste des chambres avec le nom de l’hôtel et le nom de la station
 -- Le résultat doit faire apparaître le nom de la station, le nom de l’hôtel, le numéro de la chambre et sa capacité
@@ -75,12 +84,22 @@
         FROM station
         JOIN hotel ON station.sta_id = hotel.hot_sta_id
         JOIN chambre ON hotel.hot_id = chambre.cha_hot_id;
+        Explication: Cette requête sélectionne les colonnes sta_nom, hot_nom, cha_numero et cha_capacite de la table station, la table hotel
+et la table chambre en joignant les trois tables sur les colonnes sta_id, hot_sta_id et cha_hot_id, respectivement.
+
 
 -- 12 - Afficher les réservations avec le nom du client et le nom de l’hôtel avec datediff
 -- Le résultat doit faire apparaître le nom du client, le nom de l’hôtel, la date de début du séjour et la durée du séjour
-        SELECT client.cli_nom, hotel.hot_nom, reservation.res_date_debut, DATEDIFF(res_date_fin, res_date_debut)
-        FROM client
-        JOIN reservation ON client.cli_id = reservation.res_cli_id
-        JOIN chambre ON chambre.cha_id = reservation.res_cha_id
-        JOIN hotel ON hotel.hot_id = chambre.cha_hot_id;
+        SELECT client.cli_nom, hotel.hot_nom, reservation.res_date_debut, DATEDIFF(res_date_fin, res_date_debut) AS duree_sejour
+        FROM reservation
+        JOIN client ON reservation.res_cli_id = client.cli_id
+        JOIN chambre ON reservation.res_cha_id = chambre.cha_id
+        JOIN hotel ON chambre.cha_hot_id = hotel.hot_id
+Explication :
+On sélectionne les colonnes cli_nom, hot_nom, res_date_debut et la durée du séjour obtenue avec la fonction DATEDIFF(res_date_fin, res_date_debut)
+qui calcule la différence en jours entre la date de fin et la date de début de la réservation.
+On récupère les données à partir de la table reservation.
+On relie les tables client, chambre et hotel en utilisant la clause JOIN.
+Les relations entre les tables sont spécifiées grâce aux clauses ON. 
+On relie reservation et client avec la clé étrangère res_cli_id et cli_id. On relie reservation, chambre et hotel avec les clés étrangères res_cha_id, cha_id, cha_hot_id et hot_id.
 
