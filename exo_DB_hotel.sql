@@ -103,3 +103,63 @@ On relie les tables client, chambre et hotel en utilisant la clause JOIN.
 Les relations entre les tables sont spécifiées grâce aux clauses ON. 
 On relie reservation et client avec la clé étrangère res_cli_id et cli_id. On relie reservation, chambre et hotel avec les clés étrangères res_cha_id, cha_id, cha_hot_id et hot_id.
 
+
+-- Exercice
+-- Ecrivez les requêtes correspondant aux demandes suivantes :
+Lot 3 : fonctions d'agrégation
+
+13 - Compter le nombre d’hôtel par station :
+
+SELECT hot_sta_id, COUNT(*) AS nombre_hotels
+FROM hotel
+GROUP BY hot_sta_id;
+
+Cette requête utilise la fonction d'agrégation COUNT pour compter le nombre d'hôtels par station. 
+La clause GROUP BY regroupe les résultats par station.
+
+14 - Compter le nombre de chambres par station :
+
+SELECT hot_sta_id, COUNT(*) AS nombre_chambres
+FROM chambre
+JOIN hotel ON chambre.cha_hot_id = hotel.hot_id
+GROUP BY hot_sta_id;
+
+Cette requête utilise la fonction d'agrégation COUNT pour compter le nombre de chambres par station. 
+Elle utilise également une jointure entre la table chambre et la table hotel pour pouvoir accéder à la station de chaque hôtel. La clause GROUP BY regroupe les résultats par station.
+
+15 - Compter le nombre de chambres par station ayant une capacité > 1 :
+
+SELECT hot_sta_id, COUNT(*) AS nombre_chambres_cap_sup_1
+FROM chambre
+JOIN hotel ON chambre.cha_hot_id = hotel.hot_id
+WHERE cha_capacite > 1
+GROUP BY hot_sta_id;
+
+Cette requête utilise la fonction d'agrégation COUNT pour compter le nombre de chambres par station ayant une capacité supérieure à 1. 
+Elle utilise également une jointure entre la table chambre et la table hotel pour pouvoir accéder à la station de chaque hôtel. 
+La clause WHERE permet de filtrer les résultats pour ne conserver que les chambres ayant une capacité supérieure à 1. La clause GROUP BY regroupe les résultats par station.
+
+16 - Afficher la liste des hôtels pour lesquels Mr Squire a effectué une réservation :
+
+SELECT DISTINCT hotel.hot_nom
+FROM reservation
+JOIN chambre ON reservation.res_cha_id = chambre.cha_id
+JOIN hotel ON chambre.cha_hot_id = hotel.hot_id
+JOIN client ON reservation.res_cli_id = client.cli_id
+WHERE client.cli_nom = 'Squire';
+
+Cette requête utilise une jointure entre la table reservation, la table chambre, la table hotel et la table client pour accéder aux informations nécessaires. 
+La clause WHERE permet de filtrer les résultats pour ne conserver que les réservations effectuées par un client nommé 'Squire'. 
+La clause DISTINCT permet d'éviter d'avoir des doublons si plusieurs chambres ont été réservées dans le même hôtel.
+
+17 - Afficher la durée moyenne des réservations par station :
+
+SELECT hotel.hot_sta_id, AVG(DATEDIFF(res_date_fin, res_date_debut)) AS duree_moyenne_reservation
+FROM reservation
+JOIN chambre ON reservation.res_cha_id = chambre.cha_id
+JOIN hotel ON chambre.cha_hot_id = hotel.hot_id
+GROUP BY hotel.hot_sta_id;
+
+Cette requête utilise la fonction d'agrégation AVG pour calculer la durée moyenne des réservations par station. 
+Elle utilise une jointure entre la table reservation, la table chambre et la table hotel pour accéder aux informations nécessaires. 
+La fonction DATEDIFF est utilisée pour calculer la durée d'une réservation. La clause GROUP BY regroupe les résultats par station.
