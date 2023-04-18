@@ -100,7 +100,7 @@
     -- Le premier JOIN relie les tables entcom et ligcom sur la colonne numcom, le second JOIN relie les tables ligcom et produit sur la colonne codart.
     -- La clause GROUP BY regroupe les lignes de commande par numéro de commande (numcom)
     -- SUM calcule le total de chaque commande en multipliant la quantité de chaque produit (qtecde) par le prix unitaire (priuni)
-    -- ORDER BY trrie les commandes par total décroissant (DESC)
+    -- ORDER BY tri les commandes par total décroissant (DESC)
 
 -- 9-Lister les commandes dont le total est supérieur à 10000€ ; on exclura dans le calcul du total les articles commandés en quantité supérieure ou égale à 1000.
 -- Afficher numéro de commande et total.
