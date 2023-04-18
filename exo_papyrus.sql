@@ -269,12 +269,11 @@ SELECT *
 FROM produit
 WHERE (SELECT SUM(qtecde) FROM ligcom WHERE ligcom.codart = produit.codart)/produit.qteann >= 0.9
   -- Explications :
-  -- La requête sélectionne toutes les colonnes de la table produit où la quantité commandée réelle pour un produit donné, 
-  -- obtenue en faisant la somme de toutes les quantités commandées de ce produit dans la table ligcom, 
-  -- est supérieure ou égale à 90% de la quantité annuelle prévue pour ce produit.
-  -- Cela est réalisé en utilisant une sous-requête pour calculer la somme de toutes les quantités commandées de chaque produit dans la table ligcom 
-  -- et en divisant cette somme par la quantité annuelle prévue pour ce produit. Si cette division est supérieure ou égale à 0.9, 
-  -- alors la condition de la clause WHERE est vérifiée pour ce produit, et il est retourné dans le résultat de la requête.
+  -- On prend toutes les colonnes de la table produit où la quantité commandée réelle pour un produit donné, obtenue en faisant la somme de toutes 
+  -- les quantités commandées de ce produit dans la table ligcom, est supérieure ou égale à 90% de la quantité annuelle.
+  -- On utilise une sous-requête pour calculer la somme de toutes les quantités commandées de chaque produit dans la table ligcom 
+  -- et en divisant cette somme par la quantité annuelle prévue pour ce produit. Si cette division est supérieure ou égale à 0.9,
+  -- alors la clause WHERE est vérifiée pour ce produit, et il est retourné dans le résultat de la requête.
 
 
 -- 19-Calculer le chiffre d'affaire par fournisseur pour l'année 2018, sachant que les prix indiqués sont hors taxes et que le taux de TVA est 20%.
