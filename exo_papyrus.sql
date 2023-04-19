@@ -71,19 +71,27 @@
     -- On peut aussi utiliser YEAR(datecom) = 2020 pour ne prendre que les commandes de l'année 2020.
 
 
--- **********Marche mais pas dans papyrus*********
 -- 7-Quelles sont les commandes du jour qui ont des observations particulières ?
 -- Afficher numéro de commande et date de commande.
   SELECT numcom, datcom
   FROM entcom
   WHERE DATE(datcom) = CURDATE() AND obscom IS NOT NULL;
+  WHERE obscom IS NOT NULL;
     -- Explications :
     -- La fonction CURDATE() retourne la date courante.
     -- DATE(datcom) extrait la date de la colonne datcom qui contient à la fois la date et l'heure de la commande.
     -- WHERE DATE(datcom) = CURDATE() filtre les commandes dont la date est égale à la date courante.
     -- AND obscom IS NOT NULL filtre les commandes qui ont une observation non nulle.
-    -- SELECT numcom, datcom sélectionne le numéro de commande et la date de commande pour les commandes qui satisfont les deux conditions du WHERE.
-    -- Note : CURDATE() est une fonction MySQL qui renvoie la date actuelle, ce qui signifie que la requête renverra les commandes du jour en cours. 
+    -- SELECT numcom, datcom sélectionne le numéro de commande et la date de commande.
+    -- ***** Note : CURDATE() renvoie la date actuelle, ce qui signifie que la requête renverra les commandes du jour en cours. 
+    ------Autre possibilité pour voir les commande en fonction du jour:
+  SELECT numcom, datcom
+  FROM entcom
+  WHERE obscom IS NOT NULL;
+    -- Explications :
+    -- SELECT numcom, datcom sélectionne le numéro de commande et la date de commande.
+    -- WHERE obscom IS NOT NULL filtre les commandes ayant une observation non nulle.
+
 
 -- 8-Lister le total de chaque commande par total décroissant.
 -- Afficher numéro de commande et total.
@@ -102,18 +110,16 @@
     -- SUM calcule le total de chaque commande en multipliant la quantité de chaque produit (qtecde) par le prix unitaire (priuni)
     -- ORDER BY tri les commandes par total décroissant (DESC)
 
+
 -- 9-Lister les commandes dont le total est supérieur à 10000€ ; on exclura dans le calcul du total les articles commandés en quantité supérieure ou égale à 1000.
 -- Afficher numéro de commande et total.
-  SELECT ligcom.numcom, SUM(ligcom.priuni*ligcom.qtecde) as total
+  SELECT ligcom.numcom, SUM(ligcom.priuni*ligcom.qtecde) AS total
   FROM ligcom
-  JOIN entcom ON ligcom.numcom = entcom.numcom
-  JOIN produit ON ligcom.codart = produit.codart
-  WHERE qtecde < 1000
+  WHERE qtecde >= 1000
   GROUP BY numcom
   HAVING total > 10000;
     -- Explication :
     -- Avec SELECT on affiche: numcom pour le numéro de commande et SUM(priuni*qtecde) pour le total de chaque commande.
-    -- On JOIN les tables lignecom, entcom et produit en utilisant les clés étrangères numcom et codart.
     -- On filtre les lignes de commande avec une quantité inférieure à 1000 en utilisant la condition WHERE qtecom < 1000.
     -- On groupe les résultats par numéro de commande en utilisant GROUP BY numcom.
     -- On filtre les commandes dont le total est supérieur à 10000€ en utilisant HAVING total > 10000.
@@ -130,6 +136,7 @@
     -- FROM entcom: spécifie que nous voulons récupérer des données à partir de la table entcom.
     -- JOIN fournis ON entcom.numfou = fournis.numfou: joint la table fournis avec la table entcom en utilisant la clé étrangère numfou.
     -- ORDER BY fourn.nomfou: tri les résultats par ordre alphabétique du nom du fournisseur, qui est la colonne nomfou de la table fournis.
+
 
 -- 11-Sortir les produits des commandes ayant le mot "urgent' en observation.
 -- Afficher numéro de commande, nom du fournisseur, libellé du produit et sous total (= quantité commandée * prix unitaire)
@@ -164,7 +171,9 @@
     FROM entcom
     INNER JOIN produit ON produit.unimes = entcom.numcom OR produit.unimes = 'unite'
   ) AS livraisons ON fournis.numfou = livraisons.numfou
-    -- Utiliser une sous-requête pour récupérer les fournisseurs ayant livré un produit, puis faire une jointure avec la table fournis pour récupérer leur nom.
+    -- Utiliser une sous-requête pour récupérer les fournisseurs ayant livré un produit, 
+    -- puis faire une jointure avec la table fournis pour récupérer leur nom.
+
 
 -- 13-Coder de 2 manières différentes la requête suivante : Lister les commandes dont le fournisseur est celui de la commande n°70210.
 -- Afficher numéro de commande et date.
@@ -194,10 +203,11 @@
   FROM produit
   JOIN vente ON produit.codart = vente.codart
   WHERE prix1 < (SELECT MIN(prix1) FROM vente WHERE codart LIKE 'R%')
-    --Cette requête utilise une sous-requête pour sélectionner le prix minimum des rubans. La clause WHERE de la requête principale sélectionne 
-    --les articles avec un prix1 inférieur à ce prix minimum. 
-    --Le résultat renvoie le libellé et le prix1 de chaque article répondant à ces critères.
-    --La syntaxe de la requête suppose que la table article a été créée dans la base de données papyrus et contient les colonnes suivantes : codart, libart, prix1.
+    -- Explications :
+    -- Cette requête utilise une sous-requête pour sélectionner le prix minimum des rubans. La clause WHERE de la requête principale sélectionne 
+    -- les articles avec un prix1 inférieur à ce prix minimum. 
+    -- Le résultat renvoie le libellé et le prix1 de chaque article répondant à ces critères.
+    -- La syntaxe de la requête suppose que la table article a été créée dans la base de données papyrus et contient les colonnes suivantes : codart, libart, prix1.
 
 
 -- 15-Sortir la liste des fournisseurs susceptibles de livrer les produits dont le stock est inférieur ou égal à 150 % du stock d'alerte.
@@ -210,70 +220,60 @@
   WHERE produit.stkphy <= 1.5 * produit.stkale
   ORDER BY produit.libart, fourn.nomfou;
     -- Explications :
-    -- La clause SELECT sélectionne les colonnes que nous souhaitons afficher dans notre résultat, à savoir : le nom du fournisseur (nomfou), 
-    -- le nom du produit (libart), le stock d'alerte (stkale) et le stock physique (stkphy).
+    -- La clause SELECT sélectionne le nom du fournisseur, le nom du produit, le stock d'alerte et le stock physique.
     -- On utilise la clause FROM pour spécifier les tables sur lesquelles nous voulons effectuer notre requête. 
     -- On a besoin de quatre tables : fourn, entcom, ligcom et produit.
-    -- La clause INNER JOIN pour joindre les tables. 
-    -- La première jointure relie la table fourn à la table entcom sur le numéro de fournisseur (numfou). 
-    -- La deuxième jointure relie la table entcom à la table ligcom sur le numéro de commande (numcom). 
-    -- La troisième jointure relie la table ligcom à la table produit sur le code article (codart).
-    -- On utilise la clause WHERE pour spécifier les critères de filtrage de notre requête. 
-    -- Puis on sélectionne les produits dont le stock physique est inférieur ou égal à 150 % du stock d'alerte. 
-    -- Puis on calcul cette valeur en multipliant le stock d'alerte (stkale) par 1.5 et en comparant le résultat au stock physique (stkphy).
+    -- On relie les tables fournis à la table entcom sur le numéro de fournisseur, la table entcom à la table ligcom sur le numéro de commande, 
+    -- et le table ligcom à la table produit sur le code article.
+    -- On utilise la clause WHERE pour spécifier les critères, quand le stock est inférieur ou égal à 150 % du stock d'alerte . 
     -- Ensuite la clause ORDER BY pour trier les résultats de notre requête. 
-    -- Et enfin on tri d'abord par nom de produit (libart), puis par nom de fournisseur (nomfou). Le tri se fait par ordre croissant par défaut.
+    -- Et enfin on tri d'abord par nom de produit, puis par nom de fournisseur. Le tri se fait par ordre croissant.
     
     
--- ******Tout cassé******
 -- 16-Sortir la liste des fournisseurs susceptibles de livrer les produits dont le stock est inférieur ou égal à 150 % du stock d'alerte, 
 -- et un délai de livraison d'au maximum 30 jours.
 -- La liste sera triée par fournisseur puis produit
-  SELECT f.nomfou, p.libart
-  FROM fournis f
-  JOIN entcom e ON f.numfou = e.numfou
-  JOIN produit p ON e.numcom = p.numcom
-  WHERE p.stkphy <= 1.5 * p.stkale AND v.dellliv <= 30
-  ORDER BY f.nomfou, p.libart;
+  SELECT fournis.numfou, fournis.nomfou, produit.codart, produit.libart 
+  FROM fournis
+  JOIN vente ON fournis.numfou = vente.numfou 
+  JOIN produit ON produit.codart = vente.codart
+  WHERE produit.stkphy <= 1.5 * produit.stkale 
+    AND EXISTS (
+      SELECT * FROM entcom 
+      WHERE entcom.numfou = fournis.numfou 
+        AND DATEDIFF(entcom.datcom, NOW()) <= 30
+    )
+  ORDER BY fournis.nomfou, produit.libart;
     -- Explications :
-    -- La clause SELECT permet de sélectionner les colonnes nomfou de la table fournis et libart de la table produit.
-    -- La clause FROM permet de spécifier les tables utilisées dans la requête : fournis, entcom et produit.
-    -- Les clauses JOIN permettent de joindre les tables entre elles. On relie les tables fournis et entcom sur la clé étrangère numfou, 
-    -- puis on relie la table entcom à la table produit sur la clé étrangère numcom.
-    -- La clause WHERE permet d'appliquer la condition de filtrage de la requête.
-    -- La clause ORDER BY permet de trier les résultats de la requête par ordre croissant de nomfou, puis par ordre croissant de libart.
+    -- On utilise SELECT pour afficher les colonnes numfou et nomfou de la table fournis ainsi que les colonnes codart et libart de la table produit.
+    -- On relie avec JOIN les tables fournis et produit et vente.
+    -- La clause WHERE filtre les résultats pour les produits dont le stock physique est inférieur ou égal à 150 % du stock d'alerte 
+    -- et qui ont été commandés auprès des fournisseurs dans les 30 derniers jours.
+    -- Avec une sous-requête on recherche les commandes passées auprès des fournisseurs dans les 30 derniers jours.
+    -- La clause ORDER BY trie les résultats par nom de fournisseur et par nom de produit.
 
 
--- ******Tout cassé******
 -- 17-Avec le même type de sélection que ci-dessus, sortir un total des stocks par fournisseur, triés par total décroissant.
-  SELECT f.numfou, f.nomfou, SUM(p.stkphy) AS total_stocks
-  FROM fournis f
-  JOIN entcom e ON f.numfou = e.numfou
-  JOIN produit p ON e.numcom = p.codart
-  GROUP BY f.numfou
-  ORDER BY total_stocks DESC;
-    -- Dans le SELECT on affiche le numéro et le nom du fournisseur, ainsi que la somme des stocks physiques des produits achetés. 
-    -- On utilise également la fonction "SUM" pour unir les stocks par fournisseur.
-    -- On JOIN les tables fournis, entcom et produit. 
-    -- On veut faire correspondre les numéros de fournisseur de la table "fournis" avec les numéros de fournisseur de la table "entcom", 
-    -- puis faire correspondre les numéros.
-    -- de commande de la table "entcom" avec les codes d'article de la table "produit".
-    -- La clause "GROUP BY" pour regrouper les résultats par numéro de fournisseur, de sorte d'avoir la somme des stocks par 
-    -- fournisseur plutôt que la somme de tous les stocks.
-    -- Enfin, la clause "ORDER BY" pour trier les résultats par ordre décroissant de la somme des stocks. 
-    -- Cela signifie que les fournisseurs avec le plus grand total de stocks apparaîtront en premier (normalement).
+  SELECT fournis.numfou, fournis.nomfou, SUM(produit.stkphy) AS total_stock
+  FROM fournis
+  JOIN vente ON fournis.numfou = vente.numfou 
+  JOIN produit ON produit.codart = vente.codart
+  WHERE produit.stkphy <= 1.5 * produit.stkale 
+    AND EXISTS (
+      SELECT * FROM entcom 
+      WHERE entcom.numfou = fournis.numfou 
+        AND DATEDIFF(entcom.datcom, NOW()) <= 30
+    )
+  GROUP BY fournis.numfou, fournis.nomfou
+  ORDER BY total_stock DESC;
+    -- Même principe que la selection précédente, mais on utilise (SUM) pour calculer le total des stocks par fournisseur. 
+    -- La clause GROUP BY regroupe les résultats par fournisseur, 
+    -- et la clause ORDER BY trie les résultats par total de stock décroissant.
 
 
 -- 18-En fin d'année, sortir la liste des produits dont la quantité réellement commandée dépasse 90% de la quantité annuelle prévue.
-SELECT *
-FROM produit
-WHERE (SELECT SUM(qtecde) FROM ligcom WHERE ligcom.codart = produit.codart)/produit.qteann >= 0.9
-  -- Explications :
-  -- On prend toutes les colonnes de la table produit où la quantité commandée réelle pour un produit donné, obtenue en faisant la somme de toutes 
-  -- les quantités commandées de ce produit dans la table ligcom, est supérieure ou égale à 90% de la quantité annuelle.
-  -- On utilise une sous-requête pour calculer la somme de toutes les quantités commandées de chaque produit dans la table ligcom 
-  -- et en divisant cette somme par la quantité annuelle prévue pour ce produit. Si cette division est supérieure ou égale à 0.9,
-  -- alors la clause WHERE est vérifiée pour ce produit, et il est retourné dans le résultat de la requête.
+ 
+
 
 
 -- 19-Calculer le chiffre d'affaire par fournisseur pour l'année 2018, sachant que les prix indiqués sont hors taxes et que le taux de TVA est 20%.
