@@ -185,7 +185,7 @@
     -- On sélectionne les colonnes "numcom" et "datcom" de la table "entcom".
     -- On utilise une clause "WHERE" pour filtrer les commandes en fonction du numéro du fournisseur.
     -- La condition de filtrage est définie à l'aide d'une sous-requête qui récupère le numéro de fournisseur de la commande dont le numéro est 70210.
---------AU POSSIBILITE
+--------AU POSSIBILITE:
 -- Deuxième façon de lister les commandes dont le fournisseur est celui de la commande n°70210 :
   SELECT e.numcom, e.datcom
   FROM entcom e
