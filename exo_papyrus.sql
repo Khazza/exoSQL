@@ -272,7 +272,6 @@
 
 
 -- 18-En fin d'année, sortir la liste des produits dont la quantité réellement commandée dépasse 90% de la quantité annuelle prévue.
- 
 
 
 
