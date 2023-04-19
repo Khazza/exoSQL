@@ -1,3 +1,8 @@
+    ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    -----Exercices
+    -----Cas Papyrus (extraction de données)
 -- 1-Quelles sont les commandes du fournisseur n°9120 ?
   SELECT numcom, obscom, datcom
   FROM entcom
@@ -164,13 +169,14 @@
     -- Utiliser une jointure entre la table fournis et la table entcom, pour récupérer les fournisseurs ayant passé une commande. 
     -- Ensuite, utiliser une autre jointure avec la table produit pour récupérer les fournisseurs qui peuvent livrer au moins un article. 
     -- Enfin, sélectionner le nom de chaque fournisseur distinct.
------AUTRE TENTATIVE INFRUCTUEUSE
+-----AUTRE TENTATIVE
   SELECT DISTINCT nomfou
   FROM fournis
   INNER JOIN (
     SELECT DISTINCT numfou
     FROM entcom
-    INNER JOIN produit ON produit.unimes = entcom.numcom OR produit.unimes = 'unite'
+    INNER JOIN ligcom ON ligcom.numcom = entcom.numcom 
+    INNER JOIN produit ON produit.codart = ligcom.codart
   ) AS livraisons ON fournis.numfou = livraisons.numfou
     -- Utiliser une sous-requête pour récupérer les fournisseurs ayant livré un produit, 
     -- puis faire une jointure avec la table fournis pour récupérer leur nom.
@@ -291,11 +297,16 @@
   JOIN ligcom ON entcom.numcom = ligcom.numcom
   JOIN produit ON ligcom.codart = produit.codart
   WHERE YEAR(entcom.datcom) = 2018
-  GROUP BY entcom.numfou, fournis.nomfou;
-    -- Explications :
-    -- On selectionne trois colonnes : numfou de la table entcom, nomfou de la table fournis, 
-    -- et la somme du chiffre d'affaires pour chaque fournisseur pour l'année 2018.
+  GROUP BY entcom---------------------------------------Ee du chiffre d'affaires pour chaque fournisseur pour l'année 2018.
     -- On utilise les clauses JOIN pour joindre les tables entcom, fournis, ligcom et produit.
     -- Ensuite la fonction YEAR() pour extraire l'année de la colonne datcom de la table entcom, et nous la comparons à 2018 à l'aide de la clause WHERE.
     -- Puis la fonction SUM() pour calculer la somme du chiffre d'affaires pour chaque fournisseur.
     -- Et enfin la formule qteann * stkale * (1 + 0.20) pour calculer le montant total de la commande, en tenant compte de la TVA de 20%.
+
+
+    ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    -----Exercices
+    -----Les besoins de mise à jour:
+
