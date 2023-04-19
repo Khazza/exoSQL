@@ -311,4 +311,36 @@
     ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     -----Exercices
     -----Les besoins de mise à jour:
+  --1
+UPDATE produit
+SET prix1 = prix1 * 1.04
+WHERE fournisseur = 9180;
 
+UPDATE produit
+SET prix2 = prix2 * 1.02
+WHERE fournisseur = 9180;
+Cette requête utilise la clause UPDATE pour mettre à jour les données de la table produit. 
+On multiplie le prix1 par 1.04 pour l'augmenter de 4%, et le prix2 par 1.02 pour l'augmenter de 2%. 
+On sélectionne les produits à mettre à jour en utilisant une sous-requête pour trouver les fournitures du fournisseur 9180 dans la table fourniture.
+
+  --2
+UPDATE produit
+SET prix2 = prix1
+WHERE prix2 = 0;
+Cette requête utilise la clause UPDATE pour mettre à jour les données de la table produit. 
+On utilise une condition WHERE pour sélectionner les produits dont le prix2 est nul. 
+On met ensuite à jour le prix2 en lui affectant la valeur du prix1.
+
+  --3
+UPDATE entcom
+SET obscom = '*****'
+WHERE numfou IN (SELECT numfou FROM fournis WHERE satisf < 5);
+Cette requête utilise la clause UPDATE pour mettre à jour les données de la table entcom. 
+On met à jour le champ obscom en lui affectant la valeur "*****". 
+On sélectionne les commandes à mettre à jour en utilisant une sous-requête pour trouver les fournisseurs ayant un indice de satisfaction inférieur à 5 dans la table fournisseurs.
+
+  --4
+DELETE FROM produit
+WHERE codart = 'I110';
+Cette requête utilise la clause DELETE pour supprimer les données de la table produit. 
+On utilise une condition WHERE pour sélectionner le produit avec le code "I110". On supprime toutes les lignes correspondantes.
