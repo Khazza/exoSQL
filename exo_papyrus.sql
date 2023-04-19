@@ -158,12 +158,13 @@
 -- 12-Coder de 2 manières différentes la requête suivante : Lister le nom des fournisseurs susceptibles de livrer au moins un article.
   SELECT DISTINCT nomfou
   FROM fournis
-  INNER JOIN entcom ON fournis.numfou = entcom.numfou
-  INNER JOIN produit ON produit.unimes = entcom.numcom OR produit.unimes = 'unite'
+  JOIN entcom ON fournis.numfou = entcom.numfou
+  JOIN ligcom ON entcom.numcom = ligcom.numcom
+  JOIN produit ON ligcom.codart = produit.codart;
     -- Utiliser une jointure entre la table fournis et la table entcom, pour récupérer les fournisseurs ayant passé une commande. 
     -- Ensuite, utiliser une autre jointure avec la table produit pour récupérer les fournisseurs qui peuvent livrer au moins un article. 
     -- Enfin, sélectionner le nom de chaque fournisseur distinct.
------AUTRE POSSIBILITE
+-----AUTRE TENTATIVE INFRUCTUEUSE
   SELECT DISTINCT nomfou
   FROM fournis
   INNER JOIN (
@@ -272,7 +273,15 @@
 
 
 -- 18-En fin d'année, sortir la liste des produits dont la quantité réellement commandée dépasse 90% de la quantité annuelle prévue.
-
+  SELECT *
+  FROM produit
+  WHERE (SELECT SUM(qtecde) FROM ligcom WHERE ligcom.codart = produit.codart)/produit.qteann >= 0.9
+    -- Explications :
+    -- On prend toutes les colonnes de la table produit ou la quantité commandée réelle pour un produit donné, obtenue en faisant la somme de toutes
+    -- les quantités commandées de ce produit dans la table ligcom, est supérieur ou égale à 90% de lka quantité annuelle.
+    -- On utilise une sous-requete pour calculer la somme de toutes les quantités commandées de chaque produit dans la table ligcom
+    -- et en divisant cette somme par la quantité annuelle prévue pour ce produit. Si cette division est supérieur ou égale a 0.9 alors 
+    -- la clause WHERE est vérifiée pour ce produit et il est retourné dans le résultat de la requête.
 
 
 -- 19-Calculer le chiffre d'affaire par fournisseur pour l'année 2018, sachant que les prix indiqués sont hors taxes et que le taux de TVA est 20%.
