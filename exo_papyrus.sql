@@ -258,6 +258,14 @@
     -- et qui ont été commandés auprès des fournisseurs dans les 30 derniers jours.
     -- Avec une sous-requête on recherche les commandes passées auprès des fournisseurs dans les 30 derniers jours.
     -- La clause ORDER BY trie les résultats par nom de fournisseur et par nom de produit.
+-- AUTRE POSSIBILITE (pas convaincu):
+SELECT fournis.nomfou, fournis.numfou, produit.codart, produit.libart, vente.delliv
+FROM fournis
+JOIN vente ON vente.numfou = fournis.numfou
+JOIN produit ON produit.codart = vente.codart
+WHERE produit.stkphy <= 1.5 * produit.stkale AND vente.delliv <= 30
+ORDER BY produit.libart AND fournis.numfou;
+
 
 
 -- 17-Avec le même type de sélection que ci-dessus, sortir un total des stocks par fournisseur, triés par total décroissant.
