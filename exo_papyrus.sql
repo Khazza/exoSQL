@@ -321,7 +321,7 @@
   WHERE numfou = 9180;
     -- Cette requête utilise la clause UPDATE pour mettre à jour les données de la table produit. 
     -- On multiplie le prix1 par 1.04 pour l'augmenter de 4%, et le prix2 par 1.02 pour l'augmenter de 2%. 
-    -- On sélectionne les produits à mettre à jour en utilisant une sous-requête pour trouver les fournitures du fournisseur 9180 dans la table fourniture.
+    -- On sélectionne les produits à mettre à jour en utilisant une condition WHERE pour trouver les fournitures du fournisseur 9180 dans la table fourniture.
 
 --2.Dans la table vente, mettre à jour le prix2 des articles dont le prix2 est nul, en affectant la valeur du prix1.
   UPDATE vente
@@ -344,7 +344,8 @@
   DELETE FROM produit
   WHERE codart = 'I110';
     -- Cette requête utilise la clause DELETE pour supprimer les données de la table produit. 
-    -- On utilise une condition WHERE pour sélectionner le produit avec le code "I110". On supprime toutes les lignes correspondantes.
+    -- On utilise une condition WHERE pour sélectionner le produit avec le code "I110". 
+    -- On supprime toutes les lignes correspondantes.
     -- Requete bonne mais refus de supprimer:
     -- #1451 - Cannot delete or update a parent row: a foreign key constraint fails 
     -- (`papyrus`.`vente`, CONSTRAINT `vente_ibfk_2` FOREIGN KEY (`codart`) REFERENCES `produit` (`codart`))
