@@ -297,7 +297,9 @@
   JOIN ligcom ON entcom.numcom = ligcom.numcom
   JOIN produit ON ligcom.codart = produit.codart
   WHERE YEAR(entcom.datcom) = 2018
-  GROUP BY entcom---------------------------------------Ee du chiffre d'affaires pour chaque fournisseur pour l'année 2018.
+  GROUP BY entcom.numfou, fournis.nomfou;
+    --Explications : 
+    -- On selectionne trois colonnes : numfou de la table entcom, nomfou de la table fournis, et la somme du chiffre d'affaires pour chaque fournisseur pour l'année 2018.
     -- On utilise les clauses JOIN pour joindre les tables entcom, fournis, ligcom et produit.
     -- Ensuite la fonction YEAR() pour extraire l'année de la colonne datcom de la table entcom, et nous la comparons à 2018 à l'aide de la clause WHERE.
     -- Puis la fonction SUM() pour calculer la somme du chiffre d'affaires pour chaque fournisseur.
