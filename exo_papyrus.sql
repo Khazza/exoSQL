@@ -78,10 +78,9 @@
 
 -- 7-Quelles sont les commandes du jour qui ont des observations particulières ?
 -- Afficher numéro de commande et date de commande.
-  SELECT numcom, datcom
+  SELECT numcom, datcom, obscom
   FROM entcom
   WHERE DATE(datcom) = CURDATE() AND obscom IS NOT NULL;
-  WHERE obscom IS NOT NULL;
     -- Explications :
     -- La fonction CURDATE() retourne la date courante.
     -- DATE(datcom) extrait la date de la colonne datcom qui contient à la fois la date et l'heure de la commande.
@@ -90,7 +89,7 @@
     -- SELECT numcom, datcom sélectionne le numéro de commande et la date de commande.
     -- ***** Note : CURDATE() renvoie la date actuelle, ce qui signifie que la requête renverra les commandes du jour en cours. 
     ------Autre possibilité pour voir les commande en fonction du jour:
-  SELECT numcom, datcom
+  SELECT numcom, datcom, obscom
   FROM entcom
   WHERE obscom IS NOT NULL AND obscom <> '';
     -- Explications :
