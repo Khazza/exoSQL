@@ -92,7 +92,7 @@
     ------Autre possibilité pour voir les commande en fonction du jour:
   SELECT numcom, datcom
   FROM entcom
-  WHERE obscom IS NOT NULL;
+  WHERE obscom IS NOT NULL AND obscom <> '';
     -- Explications :
     -- SELECT numcom, datcom sélectionne le numéro de commande et la date de commande.
     -- WHERE obscom IS NOT NULL filtre les commandes ayant une observation non nulle.
