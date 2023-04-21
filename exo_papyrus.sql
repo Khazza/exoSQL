@@ -228,8 +228,6 @@
     --fournisseurs correspondent à ceux sélectionnés par la sous-requête.
 
 
-
-
 -- 13-Coder de 2 manières différentes la requête suivante : Lister les commandes dont le fournisseur est celui de la commande n°70210.
 -- Afficher numéro de commande et date.
   SELECT numcom, datcom
@@ -239,6 +237,7 @@
     -- On sélectionne les colonnes "numcom" et "datcom" de la table "entcom".
     -- On utilise une clause "WHERE" pour filtrer les commandes en fonction du numéro du fournisseur.
     -- La condition de filtrage est définie à l'aide d'une sous-requête qui récupère le numéro de fournisseur de la commande dont le numéro est 70210.
+
 --------AUTRE POSSIBILITE:
 -- Deuxième façon de lister les commandes dont le fournisseur est celui de la commande n°70210 :
   SELECT e.numcom, e.datcom
@@ -249,6 +248,14 @@
     -- On sélectionne les colonnes "numcom" et "datcom" de la table "entcom".
     -- On utilise une jointure interne pour relier la table "entcom" à elle-même, en associant chaque commande à une autre commande passée par le même fournisseur.
     -- On utilise une clause "WHERE" pour filtrer les commandes en fonction du numéro de la commande (70210) passée par le fournisseur en question.
+
+--------AUTRE POSSIBILITE:
+  SELECT numcom, datcom
+  FROM entcom
+  WHERE numfou = (SELECT numfou FROM entcom WHERE numcom = 70210);
+    --Explication: 
+    --On sélectionne les numéros et dates de commande à partir de la table entcom où le numéro de 
+    --fournisseur est égal au numéro de fournisseur de la commande avec le numéro 70210.
 
 
 -- 14-Dans les articles susceptibles d’être vendus, lister les articles moins chers (basés sur Prix1) que le moins cher des rubans  
