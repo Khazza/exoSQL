@@ -1,7 +1,7 @@
     ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    -----Exercices
+    -----Exercices:
     -----Cas Papyrus (extraction de données)
 -- 1-Quelles sont les commandes du fournisseur n°9120 ?
   SELECT numcom, obscom, datcom
@@ -160,6 +160,35 @@
 
 
 -- 12-Coder de 2 manières différentes la requête suivante : Lister le nom des fournisseurs susceptibles de livrer au moins un article.
+  SELECT DISTINCT fourn.nomfou
+  FROM fournisseur fourn
+  INNER JOIN vente ven ON fourn.numfou = ven.numfou
+  INNER JOIN produit prod ON ven.codart = prod.codart
+  WHERE prod.stkphy > 0;
+
+    --Explication : 
+    --On JOIN pour associer les tables "fournis", "vente" et "produit" sur les clés primaires/étrangères appropriées. 
+    --WHERE est ajoutée pour filtrer les résultats et sélectionner uniquement les noms de fournisseurs pour lesquels le stock physique (stkphy) 
+    --de l'article est supérieur à 0.
+
+-----AUTRE TENTATIVE :
+  SELECT nomfou
+  FROM fournisseur
+  WHERE numfou IN (
+    SELECT numfou 
+    FROM vente 
+    WHERE codart IN (SELECT codart FROM produit WHERE stkphy > 0)
+  );
+
+    --Explication : 
+    --On utilise une sous-requête pour sélectionner les codes d'articles de la table "produit" pour lesquels 
+    --le stock physique est supérieur à 0. 
+    --Nous utilisons ensuite une autre sous-requête pour sélectionner les numéros de fournisseurs 
+    --de la table "vente" pour lesquels les codes d'article correspondent aux codes d'article sélectionnés par la première sous-requête. 
+    --Enfin, la clause IN pour sélectionner tous les noms de fournisseurs dans la table "fournis" dont les numéros de 
+    --fournisseurs correspondent à ceux sélectionnés par la deuxième sous-requête.
+
+-----AUTRE TENTATIVE :
   SELECT DISTINCT nomfou
   FROM fournis
   JOIN entcom ON fournis.numfou = entcom.numfou
@@ -168,7 +197,8 @@
     -- Utiliser une jointure entre la table fournis et la table entcom, pour récupérer les fournisseurs ayant passé une commande. 
     -- Ensuite, utiliser une autre jointure avec la table produit pour récupérer les fournisseurs qui peuvent livrer au moins un article. 
     -- Enfin, sélectionner le nom de chaque fournisseur distinct.
------AUTRE TENTATIVE
+
+-----AUTRE TENTATIVE :
   SELECT DISTINCT nomfou
   FROM fournis
   INNER JOIN (
@@ -179,6 +209,25 @@
   ) AS livraisons ON fournis.numfou = livraisons.numfou
     -- Utiliser une sous-requête pour récupérer les fournisseurs ayant livré un produit, 
     -- puis faire une jointure avec la table fournis pour récupérer leur nom.
+ ----AUTRE TENTATIVE :
+  SELECT DISTINCT fournis.nomfou
+  FROM fournis
+  INNER JOIN vente ON fournis.numfou = vente.numfou;
+    --Explication : 
+    --On JOIN pour associer les tables "fournis" et "vente" sur la clé primaire "numfou" des fournisseurs 
+    --et la clé étrangère "numfou" de la table "vente". 
+    --DISTINCT permet de supprimer les doublons dans la colonne "nomfou" pour obtenir une liste unique de noms de fournisseurs.
+
+ ----AUTRE TENTATIVE :
+  SELECT nomfou
+  FROM fournisseur
+  WHERE numfou IN (SELECT numfou FROM vente);
+    --Explication : 
+    --On fait une sous-requête pour sélectionner tous les numéros de fournisseurs dans la table "vente". 
+    --Ensuite la clause IN pour sélectionner tous les noms de fournisseurs dans la table "fournis" dont les numéros de 
+    --fournisseurs correspondent à ceux sélectionnés par la sous-requête.
+
+
 
 
 -- 13-Coder de 2 manières différentes la requête suivante : Lister les commandes dont le fournisseur est celui de la commande n°70210.
