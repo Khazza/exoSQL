@@ -303,41 +303,7 @@
 -- 16-Sortir la liste des fournisseurs susceptibles de livrer les produits dont le stock est inférieur ou égal à 150 % du stock d'alerte, 
 -- et un délai de livraison d'au maximum 30 jours.
 -- La liste sera triée par fournisseur puis produit
-  SELECT fournis.numfou, fournis.nomfou, produit.codart, produit.libart 
-  FROM fournis
-  JOIN vente ON fournis.numfou = vente.numfou 
-  JOIN produit ON produit.codart = vente.codart
-  WHERE produit.stkphy <= 1.5 * produit.stkale 
-    AND EXISTS (
-      SELECT * FROM entcom 
-      WHERE entcom.numfou = fournis.numfou 
-        AND DATEDIFF(entcom.datcom, NOW()) <= 30
-    )
-  ORDER BY fournis.nomfou, produit.libart;
-
-  -----
-
-    SELECT fournis.numfou, fournis.nomfou, produit.codart, produit.libart 
-  FROM fournis
-  INNER JOIN entcom ON fournis.numfou = entcom.numfou
-  INNER JOIN ligcom ON entcom.numcom = ligcom.numcom
-  INNER JOIN produit ON ligcom.codart = produit.codart
-  WHERE produit.stkphy <= 1.5 * produit.stkale 
-    AND EXISTS (
-      SELECT * FROM entcom 
-      WHERE entcom.numfou = fournis.numfou 
-        AND DATEDIFF(entcom.datcom, NOW()) <= 30
-    )
-  ORDER BY fournis.nomfou, produit.libart;
-    -- Explications :
-    -- On utilise SELECT pour afficher les colonnes numfou et nomfou de la table fournis ainsi que les colonnes codart et libart de la table produit.
-    -- On relie avec JOIN les tables fournis et produit et vente.
-    -- La clause WHERE filtre les résultats pour les produits dont le stock physique est inférieur ou égal à 150 % du stock d'alerte 
-    -- et qui ont été commandés auprès des fournisseurs dans les 30 derniers jours.
-    -- Avec une sous-requête on recherche les commandes passées auprès des fournisseurs dans les 30 derniers jours.
-    -- La clause ORDER BY trie les résultats par nom de fournisseur et par nom de produit.
--- AUTRE POSSIBILITE (pas convaincu):
-SELECT fournis.nomfou, fournis.numfou, produit.codart, produit.libart, vente.delliv
+SELECT fournis.nomfou, produit.libart
 FROM fournis
 JOIN vente ON vente.numfou = fournis.numfou
 JOIN produit ON produit.codart = vente.codart
