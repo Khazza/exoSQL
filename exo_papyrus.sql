@@ -274,12 +274,12 @@
 
 -- 15-Sortir la liste des fournisseurs susceptibles de livrer les produits dont le stock est inférieur ou égal à 150 % du stock d'alerte.
 -- La liste sera triée par produit puis fournisseur
-  SELECT fourn.nomfou, produit.libart, produit.stkale, produit.stkphy
+  SELECT DISTINCT fourn.nomfou, produit.libart, produit.stkale, produit.stkphy
   FROM fournis AS fourn
   INNER JOIN entcom ON fourn.numfou = entcom.numfou
   INNER JOIN ligcom ON entcom.numcom = ligcom.numcom
   INNER JOIN produit ON ligcom.codart = produit.codart
-  WHERE produit.stkphy <= 1.5 * produit.stkale
+  WHERE produit.stkphy <= (1.5 * produit.stkale) AND produit.stkphy > 0
   ORDER BY produit.libart, fourn.nomfou;
     -- Explications :
     -- La clause SELECT sélectionne le nom du fournisseur, le nom du produit, le stock d'alerte et le stock physique.
@@ -290,6 +290,14 @@
     -- On utilise la clause WHERE pour spécifier les critères, quand le stock est inférieur ou égal à 150 % du stock d'alerte . 
     -- Ensuite la clause ORDER BY pour trier les résultats de notre requête. 
     -- Et enfin on tri d'abord par nom de produit, puis par nom de fournisseur. Le tri se fait par ordre croissant.
+
+    ----------
+    SELECT DISTINCT fournis.nomfou, produit.libart, produit.stkale, produit.stkphy
+    FROM fournis
+    INNER JOIN vente ON fournis.numfou = vente.numfou
+    INNER JOIN produit ON produit.codart = vente.codart
+    WHERE produit.stkphy <= 1.5 * produit.stkale
+    ORDER BY produit.libart, fournis.nomfou;
     
     
 -- 16-Sortir la liste des fournisseurs susceptibles de livrer les produits dont le stock est inférieur ou égal à 150 % du stock d'alerte, 
@@ -299,6 +307,21 @@
   FROM fournis
   JOIN vente ON fournis.numfou = vente.numfou 
   JOIN produit ON produit.codart = vente.codart
+  WHERE produit.stkphy <= 1.5 * produit.stkale 
+    AND EXISTS (
+      SELECT * FROM entcom 
+      WHERE entcom.numfou = fournis.numfou 
+        AND DATEDIFF(entcom.datcom, NOW()) <= 30
+    )
+  ORDER BY fournis.nomfou, produit.libart;
+
+  -----
+
+    SELECT fournis.numfou, fournis.nomfou, produit.codart, produit.libart 
+  FROM fournis
+  INNER JOIN entcom ON fournis.numfou = entcom.numfou
+  INNER JOIN ligcom ON entcom.numcom = ligcom.numcom
+  INNER JOIN produit ON ligcom.codart = produit.codart
   WHERE produit.stkphy <= 1.5 * produit.stkale 
     AND EXISTS (
       SELECT * FROM entcom 
