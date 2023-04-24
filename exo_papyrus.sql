@@ -313,18 +313,21 @@ ORDER BY produit.libart AND fournis.numfou;
 
 
 -- 17-Avec le même type de sélection que ci-dessus, sortir un total des stocks par fournisseur, triés par total décroissant.
-  SELECT fournis.numfou, fournis.nomfou, SUM(produit.stkphy) AS total_stock
-  FROM fournis
-  JOIN vente ON fournis.numfou = vente.numfou 
-  JOIN produit ON produit.codart = vente.codart
-  WHERE produit.stkphy <= 1.5 * produit.stkale 
-    AND EXISTS (
-      SELECT * FROM entcom 
-      WHERE entcom.numfou = fournis.numfou 
-        AND DATEDIFF(entcom.datcom, NOW()) <= 30
-    )
-  GROUP BY fournis.numfou, fournis.nomfou
-  ORDER BY total_stock DESC;
+SELECT f.numfou, f.nomfou, SUM(p.stkphy) AS total_stock
+FROM fournis f
+JOIN vente ON vente.numfou = fournis.numfou
+JOIN produit p ON lc.codart = p.codart
+GROUP BY f.numfou
+ORDER BY total_stock DESC;
+
+---- OU
+SELECT f.numfou, f.nomfou, SUM(p.stkphy) AS total_stock
+FROM fournis f
+JOIN vente v ON v.numfou = f.numfou
+JOIN produit p ON v.codart = p.codart
+GROUP BY f.numfou
+ORDER BY total_stock DESC;
+
     -- Même principe que la selection précédente, mais on utilise (SUM) pour calculer le total des stocks par fournisseur. 
     -- La clause GROUP BY regroupe les résultats par fournisseur, 
     -- et la clause ORDER BY trie les résultats par total de stock décroissant.
